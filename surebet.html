@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="it">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Surebet Calculator</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background: #0f172a;
+        color: #e5e7eb;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .card {
+        background: #020617;
+        padding: 24px;
+        border-radius: 12px;
+        width: 360px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+      }
+      h2 {
+        margin-bottom: 16px;
+        text-align: center;
+      }
+      input {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        border: none;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background: #2563eb;
+        border: none;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #1d4ed8;
+      }
+      .result {
+        margin-top: 16px;
+        padding: 12px;
+        border-radius: 6px;
+        background: #020617;
+      }
+      .bad {
+        color: #f87171;
+      }
+      .good {
+        color: #4ade80;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Surebet Tool</h2>
+
+      <input type="number" id="q1" step="0.01" placeholder="Quota 1" />
+      <input type="number" id="q2" step="0.01" placeholder="Quota 2" />
+      <input type="number" id="stake" step="1" placeholder="Stake totale (€)" />
+
+      <button onclick="calculate()">Calcola</button>
+
+      <div id="result" class="result"></div>
+    </div>
+
+    <script>
+      function calculate() {
+        const q1 = parseFloat(document.getElementById('q1').value);
+        const q2 = parseFloat(document.getElementById('q2').value);
+        const total = parseFloat(document.getElementById('stake').value);
+        const result = document.getElementById('result');
+
+        if (!q1 || !q2 || !total) {
+          result.innerHTML =
+            "<span class='bad'>Inserisci tutti i valori</span>";
+          return;
+        }
+
+        const invSum = 1 / q1 + 1 / q2;
+
+        if (invSum >= 1) {
+          result.innerHTML = `
+          <div class="bad">
+            ❌ NON è una surebet<br>
+            Somma inverse: ${invSum.toFixed(4)}
+          </div>
+        `;
+          return;
+        }
+
+        const stake1 = total / q1 / invSum;
+        const stake2 = total / q2 / invSum;
+        const win = stake1 * q1;
+        const profit = win - total;
+
+        result.innerHTML = `
+        <div class="good">
+          ✅ È una SUREBET<br><br>
+          Puntata quota 1: €${stake1.toFixed(2)}<br>
+          Puntata quota 2: €${stake2.toFixed(2)}<br><br>
+          Profitto netto: €${profit.toFixed(2)}<br>
+          ROI: ${((profit / total) * 100).toFixed(2)}%
+        </div>
+      `;
+      }
+    </script>
+  </body>
+</html>
